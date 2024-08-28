@@ -8,7 +8,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 */
 
-//import 'package:modulo_in_door_app/route/route.dart' as route;
+//import 'package:modulo_in_door_app/route/route.dart' as route;import 'dart:async';
+
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'cultivo.dart' as mod;
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,6 +36,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  String temperatura = "";
+  String ip = mod.modulo.ip;
+  bool click = true, click2 = true;
+
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +54,164 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
     super.dispose();
   }
 
+  asyncFunc() async { // VERIFICAR SE REALMENTE PRECISA DISSO
+    // Async func to handle Futures easier; or use Future.then
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("xxxx");
+  }
+
+  // Função para ativar a iluminação, envia um URL para o 
+  // microcontrolador
+  callAPI1() async {
+    var client = http.Client();
+    // print(ip);
+    if (ip != '100.100.100.100') {
+      try {
+        var response = await client.get(
+          Uri.parse('$ip' 'cm?cmnd=Power1%20TOGGLE'),
+        );
+        //await client.get(Uri.parse('192.168.18.82/cm?cmnd=Power1%20On'));
+        var decodedResponse = jsonDecode(response.body);
+        // ignore: avoid_print
+        print(decodedResponse);
+        if (decodedResponse.toString() == '{POWER1: ON}') {
+          //
+          click = true;
+        } else {
+          //
+          click = false;
+        }
+      } finally {
+        client.close();
+      }
+    } else {
+      mensagem_ip();
+    }
+  }
+
+  callAPI2() async {
+    var client = http.Client();
+    if (ip != '100.100.100.100') {
+      try {
+        var response = await client.get(
+          Uri.parse('$ip' 'cm?cmnd=Power2%20TOGGLE'),
+        );
+        var decodedResponse = jsonDecode(response.body);
+        // ignore: avoid_print
+        print(decodedResponse);
+        if (decodedResponse.toString() == '{POWER2: ON}') {
+          //
+          click2 = true;
+        } else {
+          //
+          click2 = false;
+        }
+      } finally {
+        client.close();
+      }
+    } else {
+      mensagem_ip();
+    }
+  }
+  
+  callAPITemp() async {
+    var client = http.Client();
+    if (ip != '100.100.100.100') {
+      try {
+        var response = await client.get(
+          Uri.parse('$ip' 'cm?cmnd=Status%208'),
+        );
+        var decodedResponse = jsonDecode(response.body);
+        // ignore: avoid_print
+        //print(decodedResponse);
+        temperatura =
+            decodedResponse['StatusSNS']['ANALOG']['Temperature1'].toString();
+      } finally {
+        client.close();
+      }
+    } else
+      print(temperatura);
+    //   mensagem_ip();
+  }
+
+  void mensagem_ip() {
+    showDialog(
+      context: context,
+      builder: (alertContext) => AlertDialog(
+        title: const Text("Atenção"),
+        content: const Text(
+            """Insira o IP correto do equipamento na opção do menu principal configurações"""),
+        actions: [
+          TextButton(
+            child: const Text("Sair"),
+            onPressed: () => Navigator.pop(alertContext),
+          ),
+        ],
+      ),
+    );
+  }
+    // Método para enviar o link HTTP via web
+  void sendLink() async {
+    var client = http.Client();
+    if (ip != '100.100.100.100') {
+      try {
+        var response1 = await client.get(
+          Uri.parse('$ip' 'cm?cmnd=Power1'),
+        );
+        var decodedResponse1 = jsonDecode(response1.body);
+        // ignore: avoid_print
+        // print(decodedResponse1);
+        //print(decodedResponse['Status']['PowerOnState'].toString());
+
+        if (decodedResponse1.toString() == '{POWER1: ON}') {
+          //
+          click = true;
+        } else {
+          //
+          click = false;
+        }
+        var response2 = await client.get(
+          Uri.parse('$ip' 'cm?cmnd=Power2'),
+        );
+        var decodedResponse2 = jsonDecode(response2.body);
+        if (decodedResponse2.toString() == '{POWER2: ON}') {
+          //
+          click2 = true;
+        } else {
+          //
+          click2 = false;
+        }
+
+        if (response2.statusCode == 200) {
+          // Se a solicitação foi bem-sucedida, toque um toque de notificação
+          //  FlutterRingtonePlayer.play(
+          //    android: AndroidSounds.notification,
+          //    ios: IosSounds.glass,
+          //    looping: false,
+          //  );
+        } else {
+          print('Erro ao enviar link: status $response2.statusCode');
+        }
+      } finally {
+        client.close();
+      }
+    } else {
+      //mensagem_ip();
+    }
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    callAPITemp();
+    // Agende a tarefa de enviar o link a cada minuto
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      sendLink();
+      print(timer);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -52,14 +222,14 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Theme.of(context).primaryColor,
           automaticallyImplyLeading: false,
           leading: FlutterFlowIconButton(
             borderColor: Colors.transparent,
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_rounded,
               color: Colors.white,
               size: 30,
@@ -71,7 +241,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
             },
           ),
           title: Text(
-            'Page Title',
+            'Cultivo',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,
@@ -86,19 +256,19 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
         body: SafeArea(
           top: true,
           child: Align(
-            alignment: AlignmentDirectional(0, -1),
+            alignment: const AlignmentDirectional(0, -1),
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Container(
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: Material(
                           color: Colors.transparent,
                           elevation: 2,
@@ -115,14 +285,14 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                               shape: BoxShape.rectangle,
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    'Nome da Planta',
+                                    mod.modulo.cultivo.nome, // NOME DO CULTIVO
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
@@ -133,11 +303,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                         ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(8),
                                     child: Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Padding(
-                                        padding: EdgeInsets.all(5),
+                                        padding: const EdgeInsets.all(5),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -167,11 +337,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                 ),
                                                 child: Align(
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                           0, 0),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
                                                                 5, 0, 5, 0),
                                                     child: Row(
@@ -183,7 +353,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                       children: [
                                                         Align(
                                                           alignment:
-                                                              AlignmentDirectional(
+                                                              const AlignmentDirectional(
                                                                   0, 0),
                                                           child: Icon(
                                                             Icons.thermostat,
@@ -193,7 +363,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                             size: 35,
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 100,
                                                           child:
                                                               VerticalDivider(
@@ -203,7 +373,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                           ),
                                                         ),
                                                         Text(
-                                                          '29 ºC',
+                                                          '$temperatura ºC', // AONDE FICARÁ A TEMPERATURA
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -248,11 +418,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                   ),
                                                   child: Align(
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                             0, 0),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   5, 0, 5, 0),
                                                       child: Row(
@@ -264,7 +434,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                         children: [
                                                           Align(
                                                             alignment:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                     0, 0),
                                                             child: Icon(
                                                               Icons.water_drop,
@@ -274,7 +444,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                               size: 35,
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 100,
                                                             child:
                                                                 VerticalDivider(
@@ -284,7 +454,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            'Medio',
+                                                            'Medio', // AONDE FICA ALTURA DA ÁGUA
                                                             style: FlutterFlowTheme
                                                                     .of(context)
                                                                 .bodyMedium
@@ -297,9 +467,9 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                                 ),
                                                           ),
                                                         ]
-                                                            .divide(SizedBox(
+                                                            .divide(const SizedBox(
                                                                 width: 3))
-                                                            .around(SizedBox(
+                                                            .around(const SizedBox(
                                                                 width: 3)),
                                                       ),
                                                     ),
@@ -307,7 +477,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 8)),
+                                          ].divide(const SizedBox(width: 8)),
                                         ),
                                       ),
                                     ),
@@ -319,14 +489,14 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: Container(
                           width: 250,
                           height: 250,
                           child: Stack(
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(0, 0),
+                                alignment: const AlignmentDirectional(0, 0),
                                 child: Container(
                                   width: 230,
                                   height: 230,
@@ -334,8 +504,8 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                     color: Colors.white,
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: Image.network(
-                                        'https://images.unsplash.com/photo-1512428813834-c702c7702b78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwxMXx8cGxhbnR8ZW58MHx8fHwxNzE5MjM0MjQwfDA&ixlib=rb-4.0.3&q=80&w=1080',
+                                      image: Image.asset( // IMAGEM DO CULTIVO
+                                        mod.modulo.cultivo.imagem,
                                       ).image,
                                     ),
                                     shape: BoxShape.circle,
@@ -343,7 +513,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                 ),
                               ),
                               Align(
-                                alignment: AlignmentDirectional(0, 0),
+                                alignment: const AlignmentDirectional(0, 0),
                                 child: CircularPercentIndicator(
                                   percent: 0.8,
                                   radius: 125,
@@ -351,7 +521,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                   animation: true,
                                   animateFromLastPercent: true,
                                   progressColor:
-                                      FlutterFlowTheme.of(context).primary,
+                                      Theme.of(context).primaryColor,
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).accent4,
                                 ),
@@ -380,11 +550,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                               ),
                               child: FlutterFlowIconButton(
                                 borderColor:
-                                    FlutterFlowTheme.of(context).primary,
+                                    Theme.of(context).primaryColor,
                                 borderRadius: 20,
                                 borderWidth: 1,
                                 buttonSize: 40,
-                                fillColor: FlutterFlowTheme.of(context).accent1,
+                                fillColor: Theme.of(context).primaryColorLight,
                                 icon: FaIcon(
                                   FontAwesomeIcons.fan,
                                   color:
@@ -392,7 +562,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                   size: 40,
                                 ),
                                 onPressed: () {
-                                  print('IconButton pressed ...');
+                                  print('IconFan pressed ...');
+                                  callAPI2();
+                                  setState(() {
+                                    //print(click);
+                                  });
                                 },
                               ),
                             ),
@@ -413,11 +587,11 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                               ),
                               child: FlutterFlowIconButton(
                                 borderColor:
-                                    FlutterFlowTheme.of(context).primary,
+                                    Theme.of(context).primaryColor,
                                 borderRadius: 20,
                                 borderWidth: 1,
                                 buttonSize: 40,
-                                fillColor: FlutterFlowTheme.of(context).accent1,
+                                fillColor: Theme.of(context).primaryColorLight,
                                 icon: Icon(
                                   Icons.lightbulb_sharp,
                                   color:
@@ -425,7 +599,12 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                   size: 40,
                                 ),
                                 onPressed: () {
-                                  print('IconButton pressed ...');
+                                  print('IconLight pressed ...');
+                                  callAPI1();
+                                  setState(() {
+                                    //print(click);
+                                  });
+
                                 },
                               ),
                             ),

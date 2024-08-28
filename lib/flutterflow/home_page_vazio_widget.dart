@@ -53,9 +53,9 @@ class _HomePageVazioWidgetState extends State<HomePageVazioWidget> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             print("Go to NewBox");
-            Navigator.push(context, MaterialPageRoute(builder: (context) => NewBoxWidget()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const NewBoxWidget()));
           },
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 8,
           child: Icon(
             Icons.add,
@@ -64,10 +64,10 @@ class _HomePageVazioWidgetState extends State<HomePageVazioWidget> {
           ),
         ),
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Theme.of(context).primaryColor,
           automaticallyImplyLeading: false,
           title: Text(
-            'Nome do App',
+            'OssiBox',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,
@@ -82,20 +82,20 @@ class _HomePageVazioWidgetState extends State<HomePageVazioWidget> {
         body: SafeArea(
           top: true,
           child: Align(
-            alignment: AlignmentDirectional(0, -1),
+            alignment: const AlignmentDirectional(0, -1),
             child: Container(
               width: 340,
               height: 600,
-              decoration: BoxDecoration(),
+              decoration: const BoxDecoration(),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Align(
-                      alignment: AlignmentDirectional(0, 0),
+                      alignment: const AlignmentDirectional(0, 0),
                       child: Padding(
-                        padding: EdgeInsets.all(32),
+                        padding: const EdgeInsets.all(32),
                         child: Material(
                           color: Colors.transparent,
                           elevation: 3,
@@ -103,7 +103,7 @@ class _HomePageVazioWidgetState extends State<HomePageVazioWidget> {
                             width: 286,
                             height: 136,
                             decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).accent1,
+                              color: Theme.of(context).cardColor,
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -121,11 +121,10 @@ class _HomePageVazioWidgetState extends State<HomePageVazioWidget> {
                                 ),
                                 FaIcon(
                                   FontAwesomeIcons.boxOpen,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
+                                  color: Theme.of(context).shadowColor,
                                   size: 64,
                                 ),
-                              ].divide(SizedBox(height: 12)),
+                              ].divide(const SizedBox(height: 12)),
                             ),
                           ),
                         ),

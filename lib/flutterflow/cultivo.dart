@@ -1,7 +1,7 @@
 class Cultivo {
   final String nome;
   final String imagem;
-  final String horasLuz;
+  final int horasLuz;
   
   Cultivo(this.nome, this.imagem, this.horasLuz);
 
@@ -11,22 +11,45 @@ class Modulo {
   late String ip;
   late DateTime inicioCultivo;
   late Cultivo cultivo;
+  late String inicioCiclo;
+  late String duracao;
 
-  Modulo();
+  Cultivo nenhum = Cultivo("Sem Cultivo", "", 0); 
+  Cultivo tomateCereja = Cultivo("Tomate Cereja", "images/tomateCereja.jpg", 5);
 
-  void setModulo(String ip, Cultivo cultivo) {
-    this.ip = ip;
+  Modulo() {
+    ip = "100.100.100.100";
+    inicioCiclo = "00:00";
+    cultivo = nenhum;
+  }
+
+  void setModulo(String inicioCiclo, Cultivo cultivo, String duracao) {
+    this.inicioCiclo = inicioCiclo;
     this.cultivo = cultivo;
+    this.duracao = duracao;
     inicioCultivo = DateTime.now();
-    print("Criei um modulo com  o ip: ${this.ip}. \n");
+    print("Inicio setado para: ${this.inicioCiclo}. \n");
   }
 
   void uptIp (String ip) {
     this.ip = ip;
   }
 
+
+  Cultivo retornaCultivo (String cult) {
+    switch (cult) {
+      case "Tomate Cereja":
+        return tomateCereja;
+      default:
+        return nenhum;
+    }
+  }   
 }
 
-Cultivo nenhum = Cultivo("", "", ""); 
-Cultivo tomateCereja = Cultivo("Tomate Cereja", "https://revistacampoenegocios.com.br/wp-content/uploads/2020/05/shutterstock_120016855.jpg", "05:00 - 14:00");
+
+// Cria uma nova instância de Modulo
+Modulo modulo = Modulo();
+
+// Configura o módulo usando a instância criada
+//modulo.setModulo(textController!.text, mod.tomateCereja);
 

@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'trocar_i_p_model.dart';
 export 'trocar_i_p_model.dart';
 
+import 'cultivo.dart' as mod;
+
 class TrocarIPWidget extends StatefulWidget {
   const TrocarIPWidget({super.key});
 
@@ -48,7 +50,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: AlignmentDirectional(0, 0),
+      alignment: const AlignmentDirectional(0, 0),
       child: Container(
         width: 250,
         height: 250,
@@ -61,7 +63,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Align(
-              alignment: AlignmentDirectional(0, 0),
+              alignment: const AlignmentDirectional(0, 0),
               child: Container(
                 width: 220,
                 height: 40,
@@ -69,7 +71,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                 ),
                 child: Align(
-                  alignment: AlignmentDirectional(-1, 0),
+                  alignment: const AlignmentDirectional(-1, 0),
                   child: Text(
                     'Digite o novo IP :',
                     textAlign: TextAlign.start,
@@ -85,9 +87,9 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
             ),
             Container(
               width: 200,
-              decoration: BoxDecoration(),
+              decoration: const BoxDecoration(),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 12),
+                padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 12),
                 child: TextFormField(
                   controller: _model.textController,
                   focusNode: _model.textFieldFocusNode,
@@ -107,14 +109,14 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                             ),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: FlutterFlowTheme.of(context).alternate,
+                        color: Theme.of(context).primaryColorLight,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: FlutterFlowTheme.of(context).primary,
+                        color: Theme.of(context).primaryColorLight,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(8),
@@ -144,10 +146,10 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0, 0),
+              alignment: const AlignmentDirectional(0, 0),
               child: Container(
                 width: 220,
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -190,7 +192,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: FlutterFlowTheme.of(context).primary,
+                          color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: FlutterFlowIconButton(
@@ -203,8 +205,10 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                             color: FlutterFlowTheme.of(context).primaryText,
                             size: 24,
                           ),
-                          onPressed: () async {
-                            print("Go back page");
+                          onPressed: () async { // ALTERAÇÃO DO IP
+                            String a = _model.textController.text;
+                            mod.modulo.uptIp("http://$a/");
+                            print("Ip alterado para $a");
                             Navigator.pop(context);
                             //context.safePop();
                           },
@@ -215,7 +219,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                 ),
               ),
             ),
-          ].divide(SizedBox(height: 12)),
+          ].divide(const SizedBox(height: 12)),
         ),
       ),
     );

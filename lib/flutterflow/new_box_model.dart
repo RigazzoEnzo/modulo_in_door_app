@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 */
 
-import 'cultivo.dart' as mod;
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'new_box_widget.dart' show NewBoxWidget;
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ class NewBoxModel extends FlutterFlowModel<NewBoxWidget> {
   String? Function(BuildContext, String?)? textControllerValidator;
   // State field(s) for DropDown widget.
   String? dropDownValue;
+  String? dropDownValue2;
   FormFieldController<String>? dropDownValueController;
   // State field(s) for PageView widget.
   PageController? pageViewController;
@@ -36,12 +36,8 @@ class NewBoxModel extends FlutterFlowModel<NewBoxWidget> {
 
   @override
   void initState(BuildContext context) {
-    // Cria uma nova instância de Modulo
-    mod.Modulo modulo = mod.Modulo();
-    
-    // Configura o módulo usando a instância criada
-    modulo.setModulo(textController!.text, mod.tomateCereja);
   }
+
 
   @override
   void dispose() {

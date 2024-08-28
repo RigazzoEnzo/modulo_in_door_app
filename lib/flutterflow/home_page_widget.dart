@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 */
 
+import 'cultivo.dart' as mod;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:flutter/material.dart';
@@ -52,13 +53,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        backgroundColor: Theme.of(context).highlightColor,
         drawer: Container(
           width: 260,
           child: Drawer(
             elevation: 16,
             child: Align(
-              alignment: AlignmentDirectional(0, 0),
+              alignment: const AlignmentDirectional(0, 0),
               child: Container(
                 width: 220,
                 height: 740,
@@ -76,7 +77,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Align(
-                        alignment: AlignmentDirectional(-1, 0),
+                        alignment: const AlignmentDirectional(-1, 0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -105,7 +106,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Align(
-                        alignment: AlignmentDirectional(-1, 0),
+                        alignment: const AlignmentDirectional(-1, 0),
                         child: Builder(
                           builder: (context) => InkWell(
                             splashColor: Colors.transparent,
@@ -120,7 +121,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     elevation: 0,
                                     insetPadding: EdgeInsets.zero,
                                     backgroundColor: Colors.transparent,
-                                    alignment: AlignmentDirectional(0, 0)
+                                    alignment: const AlignmentDirectional(0, 0)
                                         .resolve(Directionality.of(context)),
                                     child: GestureDetector(
                                       onTap: () => _model
@@ -128,7 +129,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ? FocusScope.of(context)
                                               .requestFocus(_model.unfocusNode)
                                           : FocusScope.of(context).unfocus(),
-                                      child: TrocarIPWidget(),
+                                      child: const TrocarIPWidget(),
                                     ),
                                   );
                                 },
@@ -154,7 +155,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Align(
-                        alignment: AlignmentDirectional(-1, 0),
+                        alignment: const AlignmentDirectional(-1, 0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -188,8 +189,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             SliverAppBar(
               pinned: false,
               floating: false,
-              backgroundColor: FlutterFlowTheme.of(context).primary,
-              iconTheme: IconThemeData(color: Colors.black),
+              backgroundColor: Theme.of(context).primaryColor,
+              iconTheme: const IconThemeData(color: Colors.white),
               automaticallyImplyLeading: true,
               leading: InkWell(
                 splashColor: Colors.transparent,
@@ -199,13 +200,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 onTap: () async {
                   scaffoldKey.currentState!.openDrawer();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.list,
-                  color: FlutterFlowTheme.of(context).secondaryText,
+                  color: Colors.white,
                   size: 24,
                 ),
               ),
-              actions: [],
+              actions: const [],
               centerTitle: false,
               elevation: 4,
             )
@@ -215,9 +216,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               return SafeArea(
                 top: false,
                 child: Align(
-                  alignment: AlignmentDirectional(0, -1),
+                  alignment: const AlignmentDirectional(0, -1),
                   child: Padding(
-                    padding: EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(18),
                     child: Material(
                       color: Colors.transparent,
                       elevation: 3,
@@ -236,15 +237,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(0, 0),
+                              alignment: const AlignmentDirectional(0, 0),
                               child: Padding(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 child: Container(
                                   width: double.infinity,
-                                  decoration: BoxDecoration(),
-                                  alignment: AlignmentDirectional(0, 0),
+                                  decoration: const BoxDecoration(),
+                                  alignment: const AlignmentDirectional(0, 0),
                                   child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
+                                    alignment: const AlignmentDirectional(0, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -252,23 +253,31 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       children: [
                                         Align(
                                           alignment:
-                                              AlignmentDirectional(-1, 0),
+                                              const AlignmentDirectional(-1, 0),
                                           child: Padding(
-                                            padding: EdgeInsets.all(16),
+                                            padding: const EdgeInsets.all(16),
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              child: Image.network(
-                                                'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwyMXx8cGxhbnR8ZW58MHx8fHwxNzE5NjkzNDEyfDA&ixlib=rb-4.0.3&q=80&w=1080',
+                                              child: Image.asset(
+                                                //IMAGEM PRINCIPAL
+                                                mod.modulo.cultivo.imagem,
                                                 width: 136,
                                                 height: 136,
                                                 fit: BoxFit.cover,
+                                                /*errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                  // Retorna um widget substituto em caso de erro no carregamento da imagem
+                                                  return const Icon(
+                                                    Icons.error,
+                                                    size: 136,
+                                                  );
+                                                }*/
                                               ),
                                             ),
                                           ),
                                         ),
                                         Align(
-                                          alignment: AlignmentDirectional(0, 0),
+                                          alignment: const AlignmentDirectional(0, 0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -276,9 +285,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             children: [
                                               Align(
                                                 alignment:
-                                                    AlignmentDirectional(-1, 0),
+                                                    const AlignmentDirectional(-1, 0),
                                                 child: Text(
-                                                  'Nome do Cultivo',
+                                                  mod.modulo.cultivo.nome, //NOME DO CULTIVO
                                                   textAlign: TextAlign.center,
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -298,11 +307,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 children: [
                                                   Align(
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                             0, 0),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsets.all(5),
+                                                          const EdgeInsets.all(5),
                                                       child: Icon(
                                                         Icons.sunny,
                                                         color:
@@ -315,13 +324,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   ),
                                                   Align(
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                             0, 0),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsets.all(5),
+                                                          const EdgeInsets.all(5),
                                                       child: Text(
-                                                        '08:00 - 19:00',
+                                                        "${mod.modulo.inicioCiclo} por ${mod.modulo.cultivo.horasLuz}", // HORAS DE LUZ
                                                         style: FlutterFlowTheme
                                                                 .of(context)
                                                             .bodyMedium
@@ -338,22 +347,22 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             ],
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 5)),
+                                      ].divide(const SizedBox(width: 5)),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                             Align(
-                              alignment: AlignmentDirectional(0, 0),
+                              alignment: const AlignmentDirectional(0, 0),
                               child: Padding(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 child: Container(
                                   width: double.infinity,
-                                  decoration: BoxDecoration(),
-                                  alignment: AlignmentDirectional(0, 0),
+                                  decoration: const BoxDecoration(),
+                                  alignment: const AlignmentDirectional(0, 0),
                                   child: Align(
-                                    alignment: AlignmentDirectional(0, 0),
+                                    alignment: const AlignmentDirectional(0, 0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -369,13 +378,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           options: FFButtonOptions(
                                             height: 40,
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     24, 0, 24, 0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     0, 0, 0, 0),
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
+                                            color: Theme.of(context).primaryColor,
                                             textStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .titleSmall
@@ -385,7 +393,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       letterSpacing: 0,
                                                     ),
                                             elevation: 3,
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Colors.transparent,
                                               width: 1,
                                             ),
@@ -403,8 +411,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           child: Container(
                                             decoration: BoxDecoration(
                                               color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .accent1,
+                                                  Theme.of(context).primaryColorLight,
                                               borderRadius:
                                                   BorderRadius.circular(3),
                                             ),
@@ -426,9 +433,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           builder:
                                                               (alertDialogContext) {
                                                             return AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   'Remoção do Cultivo'),
-                                                              content: Text(
+                                                              content: const Text(
                                                                   'Deseja mesmo remover esse cultivo?'),
                                                               actions: [
                                                                 TextButton(
@@ -436,7 +443,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                       Navigator.pop(
                                                                           alertDialogContext,
                                                                           false),
-                                                                  child: Text(
+                                                                  child: const Text(
                                                                       'Cancelar'),
                                                                 ),
                                                                 TextButton(
@@ -444,7 +451,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                       Navigator.pop(
                                                                           alertDialogContext,
                                                                           true),
-                                                                  child: Text(
+                                                                  child: const Text(
                                                                       'Confirmar'),
                                                                 ),
                                                               ],
@@ -454,14 +461,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                         false;
                                                 if (confirmDialogResponse) {
                                                   print("Go to HomePageVazio");
-                                                  Navigator.push(context,MaterialPageRoute(builder: (context) => HomePageVazioWidget()));
+                                                  Navigator.push(context,MaterialPageRoute(builder: (context) => const HomePageVazioWidget()));
                                                   //context.pushNamed('HomePageVazio');
                                                 }
                                               },
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 8)),
+                                      ].divide(const SizedBox(width: 8)),
                                     ),
                                   ),
                                 ),

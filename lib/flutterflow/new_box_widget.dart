@@ -12,6 +12,7 @@ import 'package:flutterflow_ui/flutterflow_ui.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart' as smooth_page_indicator;
 import 'package:flutter/material.dart';
 
+import 'cultivo.dart' as mod;
 import 'home_page_vazio_widget.dart';
 import 'home_page_widget.dart';
 import 'new_box_model.dart';
@@ -56,7 +57,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Theme.of(context).primaryColor,
           automaticallyImplyLeading: false,
           leading: InkWell(
             splashColor: Colors.transparent,
@@ -65,40 +66,40 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
             highlightColor: Colors.transparent,
             onTap: () async {
               print("Go to HomePageVazio");
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageVazioWidget()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePageVazioWidget()));
               //context.pushNamed('HomePageVazio');
             },
-            child: Icon(
+            child: const Icon(
               Icons.arrow_back,
-              color: FlutterFlowTheme.of(context).secondaryText,
+              color: Colors.white,
               size: 24,
             ),
           ),
-          actions: [],
+          actions: const [],
           centerTitle: false,
           elevation: 4,
         ),
         body: SafeArea(
           top: true,
           child: Align(
-            alignment: AlignmentDirectional(0, 0),
+            alignment: const AlignmentDirectional(0, 0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(32),
                     child: Container(
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Align(
-                        alignment: AlignmentDirectional(0, 0),
+                        alignment: const AlignmentDirectional(0, 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Para adicionar um novo módulo, digite o IP da sua caixa:',
+                              'Digite o horário de início do ciclo e iluminação:',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -110,7 +111,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                             ),
                             Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(8, 0, 8, 36),
+                                  const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 36),
                               child: Container(
                                 width: double.infinity,
                                 child: TextFormField(
@@ -119,14 +120,14 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                   autofocus: true,
                                   obscureText: false,
                                   decoration: InputDecoration(
-                                    labelText: 'IP',
+                                    labelText: 'Horário',
                                     labelStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
                                           fontFamily: 'Readex Pro',
                                           letterSpacing: 0,
                                         ),
-                                    hintText: 'Digite o IP do seu módulo',
+                                    hintText: '14:00',
                                     hintStyle: FlutterFlowTheme.of(context)
                                         .labelMedium
                                         .override(
@@ -135,16 +136,14 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                         ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .alternate,
+                                        color: Theme.of(context).hintColor,
                                         width: 2,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primary,
+                                        color: Theme.of(context).primaryColor,
                                         width: 2,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
@@ -173,8 +172,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                         letterSpacing: 0,
                                       ),
                                   textAlign: TextAlign.start,
-                                  validator: _model.textControllerValidator
-                                      .asValidator(context),
+                                  validator: _model.textControllerValidator.asValidator(context),
                                 ),
                               ),
                             ),
@@ -191,11 +189,11 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                             ),
                             Padding(
                               padding:
-                                  EdgeInsetsDirectional.fromSTEB(8, 0, 8, 36),
+                                  const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 36),
                               child: FlutterFlowDropDown/*<String>*/(
                                 /*controller: _model.dropDownValueController ??=
                                     FormFieldController<String>(null),*/
-                                options: ['Tomate Cereja', 'Manjericão'],
+                                options: const ['Tomate Cereja', 'Manjericão'],
                                 onChanged: (val) =>
                                     setState(() => _model.dropDownValue = val),
                                 width: 300,
@@ -217,10 +215,10 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                     .secondaryBackground,
                                 elevation: 2,
                                 borderColor:
-                                    FlutterFlowTheme.of(context).alternate,
+                                    Theme.of(context).primaryColor,
                                 borderWidth: 2,
                                 borderRadius: 8,
-                                margin: EdgeInsetsDirectional.fromSTEB(
+                                margin: const EdgeInsetsDirectional.fromSTEB(
                                     16, 4, 16, 4),
                                 hidesUnderline: true,
                                 /*
@@ -237,86 +235,63 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                 */
                               ),
                             ),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                height: 500,
-                                child: Stack(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 0, 40),
-                                      child: PageView(
-                                        controller:
-                                            _model.pageViewController ??=
-                                                PageController(initialPage: 0),
-                                        scrollDirection: Axis.horizontal,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: Image.network(
-                                              'https://picsum.photos/seed/908/600',
-                                              width: 300,
-                                              height: 200,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: Image.network(
-                                              'https://picsum.photos/seed/774/600',
-                                              width: 300,
-                                              height: 200,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                            Text(
+                              'Qual período você deseja utilizar:',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Readex Pro',
+                                    fontSize: 16,
+                                    letterSpacing: 0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 36),
+                              child: FlutterFlowDropDown/*<String>*/(
+                                /*controller: _model.dropDownValueController ??=
+                                    FormFieldController<String>(null),*/
+                                options: const ['Curto - 8 horas de luz', 'Médio - 12 horas de luz', ],
+                                onChanged: (val) =>
+                                    setState(() => _model.dropDownValue2 = val),
+                                width: 300,
+                                height: 56,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .labelMedium
+                                    .override(
+                                      fontFamily: 'Readex Pro',
+                                      letterSpacing: 0,
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(-1, 1),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            16, 0, 0, 16),
-                                        child: smooth_page_indicator
-                                            .SmoothPageIndicator(
-                                          controller: _model
-                                                  .pageViewController ??=
-                                              PageController(initialPage: 0),
-                                          count: 2,
-                                          axisDirection: Axis.horizontal,
-                                          onDotClicked: (i) async {
-                                            await _model.pageViewController!
-                                                .animateToPage(
-                                              i,
-                                              duration:
-                                                  Duration(milliseconds: 500),
-                                              curve: Curves.ease,
-                                            );
-                                            setState(() {});
-                                          },
-                                          effect: smooth_page_indicator
-                                              .ExpandingDotsEffect(
-                                            expansionFactor: 3,
-                                            spacing: 8,
-                                            radius: 16,
-                                            dotWidth: 16,
-                                            dotHeight: 8,
-                                            dotColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .accent1,
-                                            activeDotColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .primary,
-                                            paintStyle: PaintingStyle.fill,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                hintText: 'Selecione o período...',
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryText,
+                                  size: 24,
                                 ),
+                                fillColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                elevation: 2,
+                                borderColor:
+                                    Theme.of(context).primaryColor,
+                                borderWidth: 2,
+                                borderRadius: 8,
+                                margin: const EdgeInsetsDirectional.fromSTEB(
+                                    16, 4, 16, 4),
+                                hidesUnderline: true,
+                                /*
+                                isOverButton: true,
+                                isSearchable: false,
+                                isMultiSelect: false,
+                                labelText: '',
+                                labelTextStyle: FlutterFlowTheme.of(context)
+                                    .labelSmall
+                                    .override(
+                                      fontFamily: 'Readex Pro',
+                                      letterSpacing: 0,
+                                    ),
+                                */
                               ),
                             ),
                             Container(
@@ -329,17 +304,20 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                               child: FFButtonWidget(
                                 onPressed: () async {
                                   print("Go to HomePage");
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageWidget()));
+                                  print(_model.textController!.text);
+                                  print(_model.dropDownValue!);
+                                  mod.modulo.setModulo( _model.textController!.text, mod.modulo.retornaCultivo(_model.dropDownValue!), _model.dropDownValue2!);
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePageWidget()));
                                   //context.pushNamed('HomePage');
                                 },
                                 text: 'Salvar',
                                 options: FFButtonOptions(
                                   height: 40,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24, 0, 24, 0),
-                                  iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                       0, 0, 0, 0),
-                                  color: FlutterFlowTheme.of(context).primary,
+                                  color: Theme.of(context).primaryColor,
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
@@ -348,7 +326,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                         letterSpacing: 0,
                                       ),
                                   elevation: 3,
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Colors.transparent,
                                     width: 1,
                                   ),
@@ -356,7 +334,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(height: 16)),
+                          ].divide(const SizedBox(height: 16)),
                         ),
                       ),
                     ),
