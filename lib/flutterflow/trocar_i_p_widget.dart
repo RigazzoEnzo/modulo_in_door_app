@@ -207,7 +207,7 @@ class _TrocarIPWidgetState extends State<TrocarIPWidget> {
                           ),
                           onPressed: () async { // ALTERAÇÃO DO IP
                             String a = _model.textController.text;
-                            mod.modulo.uptIp("http://$a/");
+                            mod.modulo.uptIp(a);
                             print("Ip alterado para $a");
                             Navigator.pop(context);
                             //context.safePop();

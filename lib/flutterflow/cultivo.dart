@@ -12,29 +12,39 @@ class Modulo {
   late DateTime inicioCultivo;
   late Cultivo cultivo;
   late String inicioCiclo;
-  late String duracao;
+  late int duracao;
 
   Cultivo nenhum = Cultivo("Sem Cultivo", "", 0); 
   Cultivo tomateCereja = Cultivo("Tomate Cereja", "images/tomateCereja.jpg", 5);
 
   Modulo() {
-    ip = "100.100.100.100";
+    ip = "192.168.0.176";
     inicioCiclo = "00:00";
     cultivo = nenhum;
   }
 
-  void setModulo(String inicioCiclo, Cultivo cultivo, String duracao) {
+  void setModulo(String inicioCiclo, Cultivo cultivo, int duracao) {
     this.inicioCiclo = inicioCiclo;
     this.cultivo = cultivo;
     this.duracao = duracao;
     inicioCultivo = DateTime.now();
-    print("Inicio setado para: ${this.inicioCiclo}. \n");
+    print("Modulo Gerado: ${this.inicioCiclo}, ${this.cultivo}, ${this.duracao}, $inicioCultivo. \n");
   }
 
   void uptIp (String ip) {
     this.ip = ip;
   }
 
+  int retornaOffset (String offset) {
+    switch(offset) {
+      case "Curto - 8 horas de luz":
+        return 1;
+      case "Médio - 12 horas de luz":
+        return 1;
+      default:
+        return 1;
+    }
+  }
 
   Cultivo retornaCultivo (String cult) {
     switch (cult) {

@@ -306,7 +306,7 @@ class _NewBoxWidgetState extends State<NewBoxWidget> {
                                   print("Go to HomePage");
                                   print(_model.textController!.text);
                                   print(_model.dropDownValue!);
-                                  mod.modulo.setModulo( _model.textController!.text, mod.modulo.retornaCultivo(_model.dropDownValue!), _model.dropDownValue2!);
+                                  mod.modulo.setModulo( _model.textController!.text, mod.modulo.retornaCultivo(_model.dropDownValue!), mod.modulo.retornaOffset(_model.dropDownValue2!));
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePageWidget()));
                                   //context.pushNamed('HomePage');
                                 },

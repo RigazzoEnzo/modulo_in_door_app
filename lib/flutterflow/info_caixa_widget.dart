@@ -38,8 +38,9 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
 
   String temperatura = "";
   String ip = mod.modulo.ip;
+  DateTime timeStart = DateFormat("HH:mm").parse(mod.modulo.inicioCiclo);
+  int offset = mod.modulo.duracao;
   bool click = true, click2 = true;
-
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
     if (ip != '100.100.100.100') {
       try {
         var response = await client.get(
-          Uri.parse('$ip' 'cm?cmnd=Power1%20TOGGLE'),
+          Uri.parse('http://$ip/' 'cm?cmnd=Power1%20TOGGLE'),
         );
         //await client.get(Uri.parse('192.168.18.82/cm?cmnd=Power1%20On'));
         var decodedResponse = jsonDecode(response.body);
@@ -93,9 +94,8 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
     var client = http.Client();
     if (ip != '100.100.100.100') {
       try {
-        var response = await client.get(
-          Uri.parse('$ip' 'cm?cmnd=Power2%20TOGGLE'),
-        );
+        var url = Uri.parse('http://$ip/' 'cm?cmnd=Power2%20TOGGLE');
+        var response = await client.get(url);
         var decodedResponse = jsonDecode(response.body);
         // ignore: avoid_print
         print(decodedResponse);
@@ -113,26 +113,118 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
       mensagem_ip();
     }
   }
+
+
+/*Future<double?> callAPITemp() async {
+  try {
+    // URL da API do Tasmota para obter o status do sensor
+    final url = Uri.parse('http://$ip/cm?cmnd=Status%2010');
+    // Fazendo a requisição GET
+    final response = await http.get(url);
+    print('Codigo: $response.statusCode');
+
+    if (response.statusCode == 200) {
+      print('oi1');
+      // Convertendo a resposta em JSON
+      final jsonResponse = json.decode(response.body);
+
+      // Extraindo a temperatura do JSON
+      // Dependendo do sensor, a estrutura do JSON pode variar.
+      // Aqui assumimos que a temperatura está em `StatusSNS` > `DS18B20` > `Temperature`
+      final temperature = jsonResponse['StatusSNS']['DS18B20']['Temperature'];
+      temperatura = temperature.toString();
+      return temperature;
+    } else {
+      print('Erro ao obter a temperatura: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Erro temp: $e');
+    return null;
+  }
+}*/
   
   callAPITemp() async {
     var client = http.Client();
     if (ip != '100.100.100.100') {
       try {
-        var response = await client.get(
-          Uri.parse('$ip' 'cm?cmnd=Status%208'),
-        );
+        //var url = Uri.http(ip, '/cm', {'cmnd': 'Status 8'});
+        //var response = await client.get(url);
+        var response = await client.get(Uri.parse('$ip' 'cm?cmnd=Status%208'));
         var decodedResponse = jsonDecode(response.body);
-        // ignore: avoid_print
-        //print(decodedResponse);
-        temperatura =
-            decodedResponse['StatusSNS']['ANALOG']['Temperature1'].toString();
-      } finally {
+
+        //if (response.statusCode == 200) {
+        //  print(decodedResponse);
+        //    decodedResponse['StatusSNS']['ANALOG']['Temperature1'].toString();
+      /*} catch (e) {
+        print('Erro: $e');*/
+         temperatura = decodedResponse['StatusSNS']['ANALOG']['Temperature1'].toString();
+      } 
+      finally {
         client.close();
       }
     } else
       print(temperatura);
     //   mensagem_ip();
   }
+
+  setTimer() async {
+  // Parâmetros para configurar o timer
+  Map<String, dynamic> timerConfigIni = {
+    "Enable": 1,
+    "Mode": 0, // 0 = repete sempre
+    "Time": DateFormat('HH:mm').format(timeStart), // Hora de ativação
+    "Window": 0, 
+    "Action": 1, // 1 = Ligar, 0 = Desligar
+    "Output": 1
+  };
+
+  Duration maisTempo = Duration(minutes: offset);
+  DateTime updatedTime = timeStart.add(maisTempo);
+
+  Map<String, dynamic> timerConfigFim = {
+    "Enable": 1,
+    "Mode": 0, // 0 = repete sempre
+    "Time": DateFormat('HH:mm').format(updatedTime), // Hora de ativação
+    "Window": 0, 
+    "Action": 0, // 1 = Ligar, 0 = Desligar
+    "Output": 1
+  };
+
+  // Enviando a requisição HTTP
+  try {
+    final response = await http.post(
+      Uri.parse('http://$ip/' 'cm?cmnd=Timer1'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(timerConfigIni),
+    );
+
+    if (response.statusCode == 200) {
+      print('Timer1 configurado com sucesso');
+    } else {
+      print('Erro ao configurar o timer: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Erro timer1: $e');
+  }
+  try {
+    final response = await http.post(
+      Uri.parse('http://$ip/' 'cm?cmnd=Timer2'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(timerConfigFim),
+    );
+
+    if (response.statusCode == 200) {
+      print('Timer2 configurado com sucesso');
+    } else {
+      print('Erro ao configurar o timer: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Erro timer2: $e');
+  }
+  
+  }
+
 
   void mensagem_ip() {
     showDialog(
@@ -391,92 +483,45 @@ class _InfoCaixaWidgetState extends State<InfoCaixaWidget> {
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                elevation: 2,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                ),
-                                                child: Container(
-                                                  width: 120,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryBackground,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3),
-                                                    border: Border.all(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryText,
-                                                    ),
-                                                  ),
-                                                  child: Align(
-                                                    alignment:
-                                                        const AlignmentDirectional(
-                                                            0, 0),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  5, 0, 5, 0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Align(
-                                                            alignment:
-                                                                const AlignmentDirectional(
-                                                                    0, 0),
-                                                            child: Icon(
-                                                              Icons.water_drop,
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .secondaryText,
-                                                              size: 35,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 100,
-                                                            child:
-                                                                VerticalDivider(
-                                                              thickness: 1,
-                                                              color: Color(
-                                                                  0xCC5A5858),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            'Medio', // AONDE FICA ALTURA DA ÁGUA
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Readex Pro',
-                                                                  fontSize: 24,
-                                                                  letterSpacing:
-                                                                      0,
-                                                                ),
-                                                          ),
-                                                        ]
-                                                            .divide(const SizedBox(
-                                                                width: 3))
-                                                            .around(const SizedBox(
-                                                                width: 3)),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                          Material(
+                                              color: Colors.transparent,
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(15),
                                               ),
-                                            ),
+                                              child: Container(
+                                                width: 80,
+                                                height: 60,
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                                  borderRadius: BorderRadius.circular(15),
+                                                ),
+                                                child: FlutterFlowIconButton(
+                                                  borderColor:
+                                                      Theme.of(context).primaryColor,
+                                                  borderRadius: 20,
+                                                  borderWidth: 1,
+                                                  buttonSize: 20,
+                                                  fillColor: Theme.of(context).primaryColorLight,
+                                                  icon: FaIcon(
+                                                    FontAwesomeIcons.arrowRotateRight,
+                                                    color:
+                                                        FlutterFlowTheme.of(context).primaryText,
+                                                    size: 40,
+                                                  ),
+                                                  onPressed: () {
+                                                    print('Atualizar a temp ...');
+                                                    callAPITemp();
+                                                    setTimer();
+                                                    setState(() {
+
+                                                    }
+                                                    );
+                                },
+                              ),
+                            ),
+                          )
                                           ].divide(const SizedBox(width: 8)),
                                         ),
                                       ),
